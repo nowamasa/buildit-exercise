@@ -22,13 +22,15 @@ export default class WeatherProvider {
         return Promise.race([timeout, fetchRequest])
                       .then(this._getResponseContent)
                       .catch((rejectInfo) => {
-                          return Promise.reject(rejectInfo || Config.MESSAGES.REQUEST_FAILED);
+                          return Promise.reject({
+                              message: rejectInfo || Config.MESSAGES.REQUEST_FAILED
+                          });
                       });
     }
 
     _getResponseContent(response) {
         return response.ok ? response.json()
-                           : Promise.reject(Config.MESSAGES.REQUEST_FAILED);
+                           : Promise.reject({message: Config.MESSAGES.REQUEST_FAILED});
     }
 
     _getRequestTimeoutPromise() {

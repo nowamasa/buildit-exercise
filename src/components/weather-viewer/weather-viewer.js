@@ -1,16 +1,27 @@
 import WeatherProvider from "../../providers/weather/weather-provider";
+import dispatcher from "../../dispatcher";
+import EVENT from "../../events";
 
 class WeatherViewer {
 
     constructor() {
-        console.log("WeatherViewer constructor called");
         this.state = {
-            showLoadingDataMessage: true,
-            weatherData: {},
-            currentDayIndex: 0
+            showLoadingMsg: true,
+            city: '',
+            days: [],
+            errorMessage: null
         }
-        this.provider = new WeatherProvider();
+        this.provider = this._getWeatherProvider();
+        this.dispatcher = this._getDispatcher();
         this.fetchWeatherData("Edinburgh", "uk");
+    }
+
+    _getWeatherProvider() {
+        return new WeatherProvider();
+    }
+
+    _getDispatcher() {
+        return dispatcher;
     }
 
     fetchWeatherData(cityName, countryCode) {
@@ -20,25 +31,31 @@ class WeatherViewer {
     }
 
     _dataFetchCompleted(response) {
-        console.log("TAG DATA RESPONSE = ", response);
-        this._tidyResponse(response)
+        console.log("data fetch completed res = ", response)
+        const {city, days} = this._tidyResponse(response);
+        this.state.city = city;
+        this.state.days = days;
+        this.state.showLoadingMsg = false;
+        this.dispatcher.trigger(EVENT.WEATHER_VIEWER_RIOT_UPDATE, this.state);
     }
 
     _tidyResponse({city, list}) {
-        console.log("city = ", city, " list = ", list)
         let uniqueDates = {};
-        let tidyList = list.map((item)=> {
-            const shortDate = item.dt_txt.split(' ')[0];
+        const parsedList = list.map((item)=> {
+            const splitDate = item.dt_txt.split(' ');
+            const shortDate = splitDate[0];
+
             uniqueDates[shortDate] = [];
             item.shortDate = shortDate;
+            item.time = splitDate[1].slice(0,4);
+            item.shortDescription = item.weather[0].description;
+            item.iconUrl = "http://openweathermap.org/img/w/" + item.weather[0].icon + ".png";
+
             return item;
         });
-
-        console.log("tidyList = ", tidyList, " uniqueDates = ", uniqueDates)
-        this._getForecastsByDay(tidyList, uniqueDates)
         return {
-            city: city,
-            list: tidyList
+            city: city.name,
+            days: this._getForecastsByDay(parsedList, uniqueDates)
         }
     }
 
@@ -48,11 +65,14 @@ class WeatherViewer {
                 return item.shortDate === key;
             });
         }
-        console.log("_getForecastsByDay = ", uniqueDates)
+        return uniqueDates;
     }
 
     _fetchDataError(response) {
-        console.log(response)
+        console.log("_fetchDataError", response);
+        this.state.showLoadingMsg = false;
+        this.state.errorMessage = response.message;
+        this.dispatcher.trigger(EVENT.WEATHER_VIEWER_RIOT_UPDATE, this.state);
     }
 }
 
