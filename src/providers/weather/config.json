@@ -1,3 +1,9 @@
 {
-    "url": "http://api.openweathermap.org/data/2.5/weather?q=London"
+    "URL": "http://api.openweathermap.org/data/2.5/forecast",
+    "API_KEY": "501bf09f7150443d89ab663cbc461936",
+    "MESSAGES": {
+        "REQUEST_TIMED_OUT": "Request timeout exceeded. The weather service may be experiencing problems or you may have lost your internet connection.",
+        "REQUEST_FAILED": "Request Failed. The weather service may be experiencing problems. Please try again shortly."
+    },
+    "TIMEOUT_LIMIT": 20000
 }

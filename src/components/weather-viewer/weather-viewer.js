@@ -1,33 +1,54 @@
 import WeatherProvider from "../../providers/weather/weather-provider";
 
 class WeatherViewer {
+
     constructor() {
         console.log("WeatherViewer constructor called");
         this.state = {
-            weatherResults: []
+            showLoadingDataMessage: true,
+            weatherData: {},
+            currentDayIndex: 0
         }
         this.provider = new WeatherProvider();
+        this.fetchWeatherData("Edinburgh", "uk");
     }
 
-    onclickDay(e) {
-        console.log("TODO", e)
-    }
-
-    _attachEventHandler(selector) {
-        document.querySelector(selector).addEventListener(
-            "click", this.onclickDay.bind(this)
-        );
-    }
-
-    _fetchWeatherData() {
-        this.provider.fetchWeatherData()
-                     .then(this._dataFetchCompleted)
-                     .catch(this._fetchDataError)
+    fetchWeatherData(cityName, countryCode) {
+        this.provider.fetchFiveDayForecast(cityName, countryCode)
+                     .then(this._dataFetchCompleted.bind(this))
+                     .catch(this._fetchDataError.bind(this))
     }
 
     _dataFetchCompleted(response) {
-        const componentData = this._mapResponse(response);
-        console.log(componentData)
+        console.log("TAG DATA RESPONSE = ", response);
+        this._tidyResponse(response)
+    }
+
+    _tidyResponse({city, list}) {
+        console.log("city = ", city, " list = ", list)
+        let uniqueDates = {};
+        let tidyList = list.map((item)=> {
+            const shortDate = item.dt_txt.split(' ')[0];
+            uniqueDates[shortDate] = [];
+            item.shortDate = shortDate;
+            return item;
+        });
+
+        console.log("tidyList = ", tidyList, " uniqueDates = ", uniqueDates)
+        this._getForecastsByDay(tidyList, uniqueDates)
+        return {
+            city: city,
+            list: tidyList
+        }
+    }
+
+    _getForecastsByDay(tidyList, uniqueDates) {
+        for(let key in uniqueDates) {
+            uniqueDates[key] = tidyList.filter((item)=> {
+                return item.shortDate === key;
+            });
+        }
+        console.log("_getForecastsByDay = ", uniqueDates)
     }
 
     _fetchDataError(response) {
