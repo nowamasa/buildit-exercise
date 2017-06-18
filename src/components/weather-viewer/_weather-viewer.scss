@@ -21,6 +21,10 @@ $gutter-padding: 12px;
         width: 20%;
         padding: 0.75rem $gutter-padding;
 
+        @media (max-width: 920px) {
+            width: 25%;
+        }
+
         @media (max-width: 800px) {
             width: 33%;
         }

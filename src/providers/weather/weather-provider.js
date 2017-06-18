@@ -42,15 +42,10 @@ export default class WeatherProvider {
     }
 
     _getFiveDayForecastUrl(cityName, countryCode) {
-        // api.openweathermap.org/data/2.5/forecast?q={city name},{country code}
-        // http://api.openweathermap.org/data/2.5/forecast?q=edinburgh,uk&APPID=501bf09f7150443d89ab663cbc461936
-        const url = [
-            Config.URL + '?q=',
+        return [Config.URL + '?q=',
             this._encodeURIComponent(cityName) + ',' + countryCode,
             "&APPID=" + Config.API_KEY
         ].join('');
-        console.log("request url ", url);
-        return url;
     }
 
     _getRequestConfig() {

@@ -1,7 +1,7 @@
 
-describe("I am a jasmine spec", ()=> {
+describe("WeatherViewer class", ()=> {
 
-    describe("my class", ()=> {
+    describe("constructor", ()=> {
         it("should do something", ()=> {
             expect(2).toEqual(2);
         });

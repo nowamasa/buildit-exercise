@@ -31,7 +31,6 @@ class WeatherViewer {
     }
 
     _dataFetchCompleted(response) {
-        console.log("data fetch completed res = ", response)
         const {city, days} = this._tidyResponse(response);
         this.state.city = city;
         this.state.days = days;
@@ -69,7 +68,6 @@ class WeatherViewer {
     }
 
     _fetchDataError(response) {
-        console.log("_fetchDataError", response);
         this.state.showLoadingMsg = false;
         this.state.errorMessage = response.message;
         this.dispatcher.trigger(EVENT.WEATHER_VIEWER_RIOT_UPDATE, this.state);

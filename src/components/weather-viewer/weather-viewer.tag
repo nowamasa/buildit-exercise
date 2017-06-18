@@ -42,10 +42,8 @@ import WeatherViewer from "./weather-viewer";
 
         dispatcher.on(EVENT.WEATHER_VIEWER_RIOT_UPDATE, (state)=> {
             this.state = state;
-            console.log("tag satte = ", this.state);
             this.update();
         });
-
     </script>
 
 </weather-viewer>
