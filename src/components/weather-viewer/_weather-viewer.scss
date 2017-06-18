@@ -1,0 +1,22 @@
+
+.weather-viewer-component {
+
+    background-color: #999;
+    border: 1px solid #333;
+
+    .day-weather-forecast {
+        background-color: #ccc;
+        padding: 20px;
+    }
+
+    .day {
+        box-sizing: border-box;
+        width: 20%;
+        padding: 2%;
+        float: left;
+    }
+
+    .day.selected {
+        background-color: #orange;
+    }
+}

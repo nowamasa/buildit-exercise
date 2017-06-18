@@ -1,5 +1,5 @@
 {
-    "name": "wi-pro-exercise",
+    "name": "buildit-exercise",
     "version": "0.1.0",
     "dependencies": {},
     "repository": "https://github.com/davidleghorn/buildit-exercise.git",
@@ -25,7 +25,6 @@
         "webpack-dev": "webpack --config webpack.dev.config.js",
         "sass-dev": "node-sass-chokidar src/scss -o public/dist/css",
         "test": "node_modules/.bin/babel-node node_modules/.bin/jasmine-node src --verbose --color",
-        "eslint": "./node_modules/.bin/eslint",
         "eslint-auto-fix": "./node_modules/.bin/eslint --fix ./src; exit 0;"
     }
 }

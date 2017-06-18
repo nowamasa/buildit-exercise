@@ -14,5 +14,5 @@ app.get('/', function (req, res) {
 })
 
 app.listen(3000)
-console.log("DEv server running - view weather app ay http://localhost:3000\n\n")
+console.log("Dev server running - view weather app ay http://localhost:3000\n\n")
 console.log("Ctrl + C to exit\n")
