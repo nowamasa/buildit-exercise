@@ -1,0 +1,40 @@
+
+#!/usr/bin/env bash
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+# Get a list of any js files contained in the git commit
+js_files_list=`git diff --cached --name-only --diff-filter=ACM | grep '.js$'`
+
+# default to a successful eslint execution
+# i.e. no .js files present in commit or no es linting errors occurred
+exit_code_es_lint=0
+
+# if js files exist run eslint on the files
+if [ ! -z "$js_files_list" ]; then
+    echo "eslint pre-commit - linting checked in javascript files..."
+
+    # iterate over js files calling eslint on each file
+    while read -r jsFile; do
+        node_modules/.bin/eslint $jsFile
+
+        # if the exit code from the eslint call ($0) is not 0 there were linting errors
+        if [[ $? != 0 ]]; then
+            # set exit code to 1 as a file has failed linting
+            exit_code_es_lint=1
+        fi
+    done <<< "$js_files_list"
+
+    # if es lint errors display error message and return 1 (non zero value) to prevent commit
+    if [[ $exit_code_es_lint != 0 ]]; then
+        printf "\n${RED}COMMIT ABORTED - There are eslint errors in javascript files you are committing.${NC}\n\n"
+        exit 1
+    fi
+fi
+
+# no js files in checkin or no eslint errors, exit 0 (success) to allow git commit
+printf "\n${GREEN}eslint pre-commit passed ${NC}\n\n"
+
+exit 0
