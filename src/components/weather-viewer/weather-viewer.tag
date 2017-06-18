@@ -5,8 +5,7 @@ import WeatherViewer from "./weather-viewer";
 
 <weather-viewer>
     <div class="weather-viewer-component">
-        <h2>{state.city}</h2>
-        <p>{state.showLoadingMsg.toString()}</p>
+        <h2 class="city-heading">{state.city}</h2>
         <div class="loading-msg" hide="{state.showLoadingMsg === false}">
             Loading weather...
         </div>
@@ -14,13 +13,16 @@ import WeatherViewer from "./weather-viewer";
             {state.errorMessage.message}
         </div>
         <section if="{state.days}">
-            <div each="{key, value in state.days}">
-                <h3><strong>Date</strong> {key}</h3>
-                <div>{value.length.toString()}</div>
-                <div each="{weatherObject in value}">
-                    <div>Time: {weatherObject.time}</div>
-                    <div>{weatherObject.shortDescription}</div>
-                    <img src="{weatherObject.iconUrl}" alt="{weatherObject.shortDescription} icon"/>
+            <div class="day" each="{key, value in state.days}">
+                <h3 class="date-heading">{key}</h3>
+                <div class="clearfix">
+                    <div each="{weatherObject in value}" class="day-weather-box">
+                        <div class="box-content">
+                            <div>{weatherObject.time}</div>
+                            <div>{weatherObject.shortDescription}</div>
+                            <img src="{weatherObject.iconUrl}" alt="{weatherObject.shortDescription} icon"/>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

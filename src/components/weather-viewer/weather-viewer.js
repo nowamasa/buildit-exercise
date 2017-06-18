@@ -47,7 +47,7 @@ class WeatherViewer {
 
             uniqueDates[shortDate] = [];
             item.shortDate = shortDate;
-            item.time = splitDate[1].slice(0,4);
+            item.time = splitDate[1].slice(0,5);
             item.shortDescription = item.weather[0].description;
             item.iconUrl = "http://openweathermap.org/img/w/" + item.weather[0].icon + ".png";
 

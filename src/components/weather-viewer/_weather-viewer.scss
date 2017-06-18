@@ -1,8 +1,6 @@
+$gutter-padding: 12px;
 
 .weather-viewer-component {
-
-    background-color: #999;
-    border: 1px solid #333;
 
     .loading-msg {
         padding: 16px;
@@ -12,16 +10,35 @@
         text-align: center;
     }
 
-    .error-msg {
-        color: red;
+    .city-heading,
+    .date-heading, {
+        padding-left: $gutter-padding;
     }
 
-    .day-forecasts-section {
-        display: block;
-        border: 1px solid orange;
+    .day-weather-box {
+        box-sizing: border-box;
+        float: left;
+        width: 20%;
+        padding: 0.75rem $gutter-padding;
+
+        @media (max-width: 800px) {
+            width: 33%;
+        }
+
+        @media (max-width: 600px) {
+            width: 50%;
+        }
+
+        @media (max-width: 400px) {
+            width: 100%;
+        }
+
+        .box-content {
+            border: 1px solid #666;
+            border-radius: 6px;
+            padding: 0.75rem $gutter-padding;
+            background-color: #fff;
+        }
     }
 
-    .forecast-table {
-
-    }
 }

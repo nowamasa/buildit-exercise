@@ -10,46 +10,35 @@ body {
     box-sizing: border-box;
     width: 100%;
     padding: 2%;
-    max-width: 680px;
+    max-width: 1000px;
     margin: 0 auto;
-    background-color: #fff;
 }
 
 h1 {
     font-size: 1.5rem;
     margin-bottom: 1rem;
-    color: #555;
+    padding-left: 12px;
+    color: #999;
 }
 
 h2 {
     font-size: 1.3rem;
-    margin: 0.25rem 0;
+    margin: 0.5rem 0;
     color: #666;
 }
 
 h3 {
     font-size: 1.1rem;
-    margin: 0.25rem 0;
+    margin: 1.25rem 0 0.25rem 0;
     color: #333;
 }
 
-.screen-reader-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    margin: -1px;
-    padding: 0;
-    overflow: hidden;
-    clip: rect(0,0,0,0);
-    border: 0;
+.error-msg {
+    color: red;
 }
 
 .clearfix:after {
     content: "";
     display: table;
     clear: both;
-}
-
-.no-display{
-    display: none;
 }
