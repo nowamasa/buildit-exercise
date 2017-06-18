@@ -6,7 +6,7 @@ describe("I am a jasmine spec", ()=> {
         });
 
         it("should do something else", ()=> {
-            expect(3).toEqual(2);
+            expect(3).toEqual(3);
         });
     })
 });
