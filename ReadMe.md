@@ -1,7 +1,7 @@
 ## Setup
 ```
 npm install
-bash install-git-hooks
+bash install-git-hooks.sh
 ```
 Git hooks install is optional - installs git hooks that run eslint on pre-commit and execute jasmine tests on pre-push.
 
