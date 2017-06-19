@@ -25,3 +25,4 @@ npm test | Executes jasmine unit tests
 * Add package scripts to implement hot reloading on sass and js file changes
 * Minify js compile (via a webpack.prod.config) and scss compile. Add script to package.json to run minified build
 * Add functional browser tests using, for example cucumber and protractor
+* Dockerfile for docker container app deployment
