@@ -42,10 +42,8 @@ export default class WeatherProvider {
     }
 
     _getFiveDayForecastUrl(cityName, countryCode) {
-        return [Config.URL + '?q=',
-            this._encodeURIComponent(cityName) + ',' + countryCode,
-            "&APPID=" + Config.API_KEY
-        ].join('');
+        return [Config.URL + '?q=', encodeURIComponent(cityName) + ',' + countryCode,
+            "&APPID=" + Config.API_KEY].join('');
     }
 
     _getRequestConfig() {
@@ -67,9 +65,5 @@ export default class WeatherProvider {
 
     _getWindowReference() {
         return window;
-    }
-
-    _encodeURIComponent(value) {
-        return encodeURIComponent(value);
     }
 }
