@@ -12,15 +12,16 @@ npm start | Performs babel and sass compile and opens app in node express server
 npm test | Executes jasmine unit tests
 
 ## Development notes
-Developed on OSX and tested in Chrome 58
-Please view in Chrome if possible (not yet tested in IE)
+* Node v10.6.3
+* Developed on OSX and tested in Chrome 59
+* Please view in Chrome if possible (not yet tested in IE)
 
 ## TODOs
 
-If had more time;
-
 * Cross browser testing e.g. download IE Virtual box VMs and test in IE10+
-* Complete unit tests
-* Add e2e cucumber tests using protractor
-* Display more data in each days weather summary
+* A few more unit tests for higher coverage
+* Show day of week in forecast date headers
+* Display further weather data e.g. detailed views when clicking on time forecast
 * Add package scripts to implement hot reloading on sass and js file changes
+* Minify js compile (via a webpack.prod.config) and scss compile. Add script to package.json to run minified build
+* Add functional browser tests using, for example cucumber and protractor
