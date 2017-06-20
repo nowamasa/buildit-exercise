@@ -4,8 +4,8 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m' # No Color
 
-echo "GIT pre-push : Running Jasmine unit tests...."
-output=$(node_modules/.bin/babel-node node_modules/.bin/jasmine-node src --color)
+echo "GIT pre-push : Running Jasmine unit tests..."
+output=$(node_modules/.bin/babel-node node_modules/.bin/jasmine --config=jasmine.json)
 
 if [[ $? != 0 ]]; then
     echo "$output"
