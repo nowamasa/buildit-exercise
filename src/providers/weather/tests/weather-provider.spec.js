@@ -5,11 +5,16 @@ describe("WeatherProvider", ()=> {
 
     let weatherProvider = null;
     const dispatcher = {trigger: ()=> {}};
-    const window = {fetch:()=> {}}
+
+    function getPromise(promiseHelper) {
+        return new Promise((resolve,reject)=> {
+            promiseHelper.resolve = resolve;
+            promiseHelper.reject = reject;
+        });
+    }
 
     beforeEach(()=> {
-        spyOn(WeatherProvider.prototype, "_getDispatcher").andReturn(dispatcher);
-        spyOn(WeatherProvider.prototype, "_getWindowReference").andReturn(window);
+        spyOn(WeatherProvider.prototype, "_getDispatcher").and.returnValue(dispatcher);
         weatherProvider = new WeatherProvider();
     });
 
@@ -20,57 +25,69 @@ describe("WeatherProvider", ()=> {
     });
 
     describe("fetchFiveDayForecast", ()=> {
-        const cityName = "Edinburgh";
-        const countryCode = "uk";
-        const responseData = {description: "fake response data"};
-        const fn = (resolve, reject)=> {}; // eslint-disable-line no-unused-vars
-        const timeoutPromise = new Promise(fn);
-        const resolvedFetchPromise = Promise.resolve(responseData);
         const requestConfig = {stubId: "stubbed request config"};
         const httpRequest = {stubId: "stubbed httpRequest"};
+        let fetchPromiseHelper = {}
+        let timeoutPromiseHelper = {};
 
         beforeEach(()=> {
-            spyOn(window, "fetch").andReturn(resolvedFetchPromise);
-            spyOn(weatherProvider, "_getRequestTimeoutPromise").andReturn(timeoutPromise);
-            spyOn(weatherProvider, "_getRequestConfig").andReturn(requestConfig);
-            spyOn(weatherProvider, "_getFiveDayForecastUrl").andReturn(Config.URL);
-            spyOn(weatherProvider, "_getRequestInstance").andReturn(httpRequest);
-        });
-
-        it("should call window fetch", ()=> {
-            weatherProvider.fetchFiveDayForecast(cityName, countryCode);
-            expect(window.fetch).toHaveBeenCalledWith(httpRequest);
-        });
-
-        it("should call _getResponseContent when fetch promise resolves", ()=> {
-            let fetchPromiseResolved = false;
-            spyOn(weatherProvider, "_getResponseContent").andCallFake(()=>{
-                fetchPromiseResolved = true;
-            });
-            weatherProvider.fetchFiveDayForecast(cityName, countryCode);
-            waitsFor(()=> {
-                    return fetchPromiseResolved === true;
-                }, "Timeout exceeded waiting for fetch promise to resolve", 500
+            spyOn(weatherProvider, "_getRequestConfig").and.returnValue(requestConfig);
+            spyOn(weatherProvider, "_getFiveDayForecastUrl").and.returnValue(Config.URL);
+            spyOn(weatherProvider, "_getRequestInstance").and.returnValue(httpRequest);
+            spyOn(weatherProvider, "_getRequestTimeoutPromise").and.returnValue(
+                getPromise(timeoutPromiseHelper)
             );
-            runs(()=> {
-                expect(weatherProvider._getResponseContent)
-                    .toHaveBeenCalledWith(responseData);
+            spyOn(weatherProvider, "_getFetchPromise").and.returnValue(
+                getPromise(fetchPromiseHelper)
+            );
+        });
+
+        it("should call _getResponseContent when fetch response status is ok", (done)=> {
+            let waitForPromiseRaceHelper = {};
+            const waitForPromiseRace = getPromise(waitForPromiseRaceHelper);
+            const responseData = {ok: true, description: "fake response data"};
+            spyOn(weatherProvider, "_getResponseContent").and.callFake(()=> {
+                waitForPromiseRaceHelper.resolve();
+            });
+            weatherProvider.fetchFiveDayForecast("Edinburgh", "uk");
+            fetchPromiseHelper.resolve(responseData);
+            waitForPromiseRace.then(()=> {
+                expect(weatherProvider._getResponseContent).toHaveBeenCalledWith(responseData);
+                done();
             });
         });
 
-        it("should return a rejected promise when fetch promise rejects", ()=> {
-            let fetchPromiseRejected = false;
-            spyOn(weatherProvider, "_getResponseContent").andCallFake(()=>{
-                fetchPromiseRejected = true;
+        it("should call _catchFetchError when fetch response status is not ok", (done)=> {
+            let waitForPromiseRaceHelper = {};
+            const waitForPromiseRace = getPromise(waitForPromiseRaceHelper);
+            const responseData = {ok: false};
+            spyOn(weatherProvider, "_getResponseContent").and.callThrough();
+            spyOn(weatherProvider, "_catchFetchError").and.callFake(()=> {
+                waitForPromiseRaceHelper.resolve();
             });
-            weatherProvider.fetchFiveDayForecast(cityName, countryCode);
-            waitsFor(()=> {
-                    return fetchPromiseRejected === true;
-                }, "Timeout exceeded waiting for fetch promise to resolve", 500
-            );
-            runs(()=> {
-                expect(weatherProvider._getResponseContent)
-                    .toHaveBeenCalledWith(responseData);
+            weatherProvider.fetchFiveDayForecast("Edinburgh", "uk").catch(()=>{});
+            fetchPromiseHelper.resolve(responseData);
+            waitForPromiseRace.then(()=> {
+                expect(weatherProvider._catchFetchError).toHaveBeenCalledWith(
+                    {message: Config.MESSAGES.REQUEST_FAILED}
+                );
+                done();
+            });
+        });
+
+        it("should call _catchFetchError when fetch request times out", (done)=> {
+            let waitForPromiseRaceHelper = {};
+            const waitForPromiseRace = getPromise(waitForPromiseRaceHelper);
+            spyOn(weatherProvider, "_catchFetchError").and.callFake(()=> {
+                waitForPromiseRaceHelper.reject();
+            });
+            weatherProvider.fetchFiveDayForecast("Edinburgh", "uk").catch(()=>{});
+            timeoutPromiseHelper.reject({message: Config.MESSAGES.REQUEST_TIMED_OUT});
+            waitForPromiseRace.catch(()=> {
+                expect(weatherProvider._catchFetchError).toHaveBeenCalledWith(
+                    {message: Config.MESSAGES.REQUEST_TIMED_OUT}
+                );
+                done();
             });
         });
     });
@@ -80,7 +97,7 @@ describe("WeatherProvider", ()=> {
 
         beforeEach(()=> {
             weatherProvider = new WeatherProvider();
-            spyOn(weatherProvider, "_getHeadersInstance").andReturn(headers);
+            spyOn(weatherProvider, "_getHeadersInstance").and.returnValue(headers);
         });
 
         it("should get a Headers object", ()=> {
@@ -105,13 +122,13 @@ describe("WeatherProvider", ()=> {
 
         beforeEach(()=> {
             weatherProvider = new WeatherProvider();
-            spyOn(weatherProvider, "_getHeadersInstance").andReturn(headers);
+            spyOn(weatherProvider, "_getHeadersInstance").and.returnValue(headers);
         });
 
         it("should return response json when response is ok", ()=> {
             const response = {ok: true, json: ()=> {}};
             const json = {description: "mock json returned from response.json call"};
-            spyOn(response, "json").andReturn(json);
+            spyOn(response, "json").and.returnValue(json);
             const result = weatherProvider._getResponseContent(response);
             expect(response.json).toHaveBeenCalled();
             expect(result).toEqual(json);
@@ -119,7 +136,7 @@ describe("WeatherProvider", ()=> {
 
         it("should return a rejected promise when response is not ok", ()=> {
             const response = {ok: false, json: ()=> {}};
-            spyOn(Promise, "reject").andCallFake(()=> {});
+            spyOn(Promise, "reject").and.callFake(()=> {});
             const result = weatherProvider._getResponseContent(response);
             expect(Promise.reject).toHaveBeenCalled();
             expect(result).toEqual(Promise.reject({

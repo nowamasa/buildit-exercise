@@ -12,25 +12,31 @@ export default class WeatherProvider {
     }
 
     fetchFiveDayForecast(cityName, countryCode) {
-        const timeout = this._getRequestTimeoutPromise();
+        const timeoutPromise = this._getRequestTimeoutPromise();
         const httpRequest = this._getRequestInstance(
             this._getFiveDayForecastUrl(cityName, countryCode),
             this._getRequestConfig()
         );
-        const fetchRequest = this._getWindowReference().fetch(httpRequest);
+        const fetchPromise = this._getFetchPromise(httpRequest);
 
-        return Promise.race([timeout, fetchRequest])
+        return Promise.race([timeoutPromise, fetchPromise])
                       .then(this._getResponseContent)
-                      .catch((rejectInfo) => {
-                          return Promise.reject({
-                              message: rejectInfo || Config.MESSAGES.REQUEST_FAILED
-                          });
-                      });
+                      .catch(this._catchFetchError);
     }
 
     _getResponseContent(response) {
         return response.ok ? response.json()
                            : Promise.reject({message: Config.MESSAGES.REQUEST_FAILED});
+    }
+
+    _catchFetchError(error) {
+        return Promise.reject({
+            message: error.message || Config.MESSAGES.REQUEST_FAILED
+        });
+    }
+
+    _getFetchPromise(httpRequest) {
+        return this._getWindowReference().fetch(httpRequest);
     }
 
     _getRequestTimeoutPromise() {
