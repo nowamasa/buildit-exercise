@@ -1,0 +1,7 @@
+{
+    "name": "docker-container-dependencies",
+    "description": "Dependencies to be installed in docker image",
+    "dependencies": {
+        "express": "^4.15.3"
+    }
+}

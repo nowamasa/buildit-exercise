@@ -10,6 +10,7 @@ Command | description
 ------- | -----------
 npm start | Performs babel and sass compile and opens app in node express server. App can be viewed at http://localhost:3000
 npm test | Executes jasmine unit tests
+bash docker-build-and-run.sh | builds weather app docker image and runs app in docker container. App can be viewed on port 80 of your docker host machine
 
 ## Development notes
 * Node v10.6.3
@@ -20,9 +21,8 @@ npm test | Executes jasmine unit tests
 
 * Cross browser testing e.g. download IE Virtual box VMs and test in IE10+
 * A few more unit tests for higher coverage
+* Minify js compile (via a webpack.prod.config) and scss compile. Add script to package.json to run minified build.
+* Add functional browser tests using, for example cucumber and protractor
 * Show day of week in forecast date headers
 * Display further weather data e.g. detailed views when clicking on time forecast
 * Add package scripts to implement hot reloading on sass and js file changes
-* Minify js compile (via a webpack.prod.config) and scss compile. Add script to package.json to run minified build
-* Add functional browser tests using, for example cucumber and protractor
-* Dockerfile for docker container app deployment
